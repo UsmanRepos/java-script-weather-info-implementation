@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Website</title>
+    <link rel="stylesheet" href="simpleweatherpage.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300&display=swap" rel="stylesheet"> 
+</head>
+<body>
+    <section class="card">
+        <div class="search">
+            <input class="search-bar"></input>
+            <button>&#128269</button>
+        </div>
+        <div class="weather loading">
+            <h2 class="city"></h2>
+            <div class="flex">
+                <h1 class="temprature"></h1>
+                <img src="" alt="" class="icon" />
+            </div>
+            <div class="description"> </div>
+            <div class="humidity"></div>
+            <div class="wind"></div>
+        </div>
+    </section>
+    <script>
+        let w_city = document.querySelector('.city');
+        let temprature = document.querySelector('.temprature');
+        let w_description = document.querySelector('.description');
+        let wind = document.querySelector('.wind');
+        let w_humidity = document.querySelector('.humidity');
+        let w_icon = document.querySelector('.icon');
+        let button = document.querySelector('.search button');
+        let searchBar = document.querySelector('.search-bar');
+
+        const apiKey = "62fe74680b6042d92ecd1a7f8d3102c2";
+
+        function fetchWeather(city)
+        {
+            let api = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}`;
+            console.log(api);
+
+            fetch(api)
+            .then(response => response.json())
+            .then(data => displayWeather(data));
+        }
+        function displayWeather(data)
+        {
+            const{ name } = data;
+            const { icon, description } = data.weather[0];
+            const { temp, humidity } = data.main;
+            const { speed } = data.wind;
+            
+            w_city.innerText = "Weather in " + name;
+            temprature.innerText = temp + "°C";
+            w_icon.src = `http://openweathermap.org/img/wn/${icon}.png`;
+            w_description.innerText = description;
+            w_humidity.innerText = "Humidity: " + humidity + "%";
+            wind.innerText = "Wind: " + speed + "km/h"; 
+            document.querySelector('.weather').classList.remove('loading');
+        }
+        searchBar.addEventListener('keyup', function(event){
+            if(event.key == "Enter")
+            {
+                searchWeather();
+            }
+        })
+        button.addEventListener('click', searchWeather);
+
+        function searchWeather()
+        {
+            fetchWeather(searchBar.value);
+        }
+        fetchWeather("jhelum");
+    </script>
+</body>
+</html>
